@@ -141,7 +141,24 @@ function renderWeather(cityName, country, data) {
   // Current weather card
   document.getElementById('cityName').textContent = `${cityName}, ${country}`;
   document.getElementById('weatherDateText').textContent = formatDate(current.time);
-  document.getElementById('tempVal').textContent  = `${Math.round(current.temperature_2m)}°`;
+ const temp = Math.round(current.temperature_2m);
+
+const tempEl = document.getElementById('tempVal');
+tempEl.textContent = `${temp}°`;
+
+tempEl.classList.remove(
+  'temp-cold',
+  'temp-mild',
+  'temp-hot'
+);
+
+if (temp <= 10) {
+  tempEl.classList.add('temp-cold');
+} else if (temp >= 30) {
+  tempEl.classList.add('temp-hot');
+} else {
+  tempEl.classList.add('temp-mild');
+}
   document.getElementById('conditionText').textContent = info.label;
   document.getElementById('conditionIcon').innerHTML = getConditionSVG(current.weather_code);
   document.getElementById('humidityVal').textContent   = `${current.relative_humidity_2m}%`;
@@ -157,7 +174,10 @@ function renderWeather(cityName, country, data) {
     forecastStrip.innerHTML += `
       <div class="forecast-day ${isActive}">
         <span class="day-lbl">${getDayLabel(daily.time[i], i)}</span>
-        <span class="day-ico">${getConditionSVG(daily.weather_code[i])}</span>
+       <span class="day-ico"
+      title="${wInfo.label}">
+      ${getConditionSVG(daily.weather_code[i])}
+</span>
         <span class="day-hi">${Math.round(daily.temperature_2m_max[i])}°</span>
         <span class="day-lo">${Math.round(daily.temperature_2m_min[i])}°</span>
       </div>`;
@@ -191,7 +211,7 @@ function renderWeather(cityName, country, data) {
   }
 
   // Fallback if less than 6 hours left today
-  if (count === 0) {
+  if (count < 0) {
     insightsList.innerHTML = `<div class="insight-empty">No more hourly data for today.</div>`;
   }
 

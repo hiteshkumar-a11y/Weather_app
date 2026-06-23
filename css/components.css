@@ -130,6 +130,17 @@
   letter-spacing: -0.05em;
   line-height: 0.9;
 }
+.temp-cold {
+  color: #4da6ff;
+}
+
+.temp-mild {
+  color: #6ee7b7;
+}
+
+.temp-hot {
+  color: #ff8a4c;
+}
 
 .temp-unit {
   font-family: 'DM Sans', sans-serif;

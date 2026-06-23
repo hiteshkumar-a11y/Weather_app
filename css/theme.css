@@ -34,6 +34,10 @@
   --thumb-x-dark:    0px;
   --thumb-x-light:   24px;
   --icon-show:       sun;
+
+  --temp-cold-color: #63B3FF;
+--temp-mild-color: #4EC9A0;
+--temp-hot-color: #FF9D5C;
 }
 
 [data-theme="light"] {
@@ -62,6 +66,10 @@
   --nav-inactive:    #4A6180;
   --day-active-bg:   rgba(15,122,90,0.08);
   --day-active-border: #0F7A5A;
+
+  --temp-cold-color: #2563EB;
+--temp-mild-color: #0F7A5A;
+--temp-hot-color: #EA580C;
 
   --toggle-bg:       #D5DDE8;
   --toggle-border:   rgba(18,35,58,0.12);
