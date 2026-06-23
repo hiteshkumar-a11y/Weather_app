@@ -96,3 +96,11 @@ html, body {
 .forecast-day, .insights-card, .metric-row {
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease !important;
 }
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+}

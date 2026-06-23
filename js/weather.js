@@ -49,6 +49,11 @@ const emptyState    = document.getElementById('emptyState');
 const weatherContent = document.getElementById('weatherContent');
 const clearCityBtn  = document.getElementById('clearCityBtn');
 const clearSearchBtn = document.getElementById('clearSearchBtn');
+const mobileMenuBtn =
+  document.getElementById('mobileMenuBtn');
+
+const siteNav =
+  document.querySelector('.site-nav');
 
 /* ---------- UI state helpers ---------- */
 function showLoading() {
@@ -233,6 +238,7 @@ async function geocodeCity(cityName) {
 
 async function fetchForecast(lat, lon) {
   const params = new URLSearchParams({
+
     latitude:  lat,
     longitude: lon,
     current:   'temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,surface_pressure',
@@ -315,6 +321,35 @@ clearSearchBtn.addEventListener('click', () => {
 });
 
 clearCityBtn.addEventListener('click', handleClear);
+mobileMenuBtn?.addEventListener('click', () => {
+  siteNav.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+
+  const clickedInsideMenu =
+    siteNav.contains(e.target);
+
+  const clickedMenuButton =
+    mobileMenuBtn.contains(e.target);
+
+  if (
+    !clickedInsideMenu &&
+    !clickedMenuButton
+  ) {
+    siteNav.classList.remove('open');
+  }
+
+});
+document
+  .querySelectorAll('.nav-link')
+  .forEach(link => {
+
+    link.addEventListener('click', () => {
+      siteNav.classList.remove('open');
+    });
+
+  });
 
 /* ---------- On load: restore last city ---------- */
 (async function init() {
