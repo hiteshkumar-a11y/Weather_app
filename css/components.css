@@ -1,6 +1,10 @@
 /* COMPONENTS.CSS */
 
 /* SEARCH */
+/* Hide elements when JS sets .hidden = true */
+[hidden] {
+  display: none !important;
+}
 .search-section { margin-bottom: 18px; }
 
 .search-bar {
@@ -287,4 +291,108 @@
   .forecast-day { padding: 10px 5px; gap: 5px; }
   .day-lbl { font-size: 0.6rem; }
   .insights-hdr, .insight-row { padding-left:16px; padding-right:16px; }
+}
+
+/* ============================================================
+   MILESTONE 2 — Loading, Error, Empty States
+   ============================================================ */
+
+/* ERROR BANNER */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(220, 60, 60, 0.10);
+  border: 1px solid rgba(220, 60, 60, 0.28);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  color: #E87070;
+  font-size: 0.875rem;
+  font-weight: 500;
+  animation: slideDown 0.2s ease;
+}
+
+.error-icon { display:flex; align-items:center; flex-shrink:0; }
+
+/* LOADING STATE */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 72px 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-med);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+.loading-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 72px 20px;
+  text-align: center;
+  animation: fadeIn 0.25s ease;
+}
+
+.empty-icon {
+  color: var(--text-muted);
+  opacity: 0.5;
+  margin-bottom: 4px;
+}
+
+.empty-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: -0.02em;
+}
+
+.empty-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+/* Insight empty fallback */
+.insight-empty {
+  padding: 20px 22px;
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ANIMATIONS */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

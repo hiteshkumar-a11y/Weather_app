@@ -30,6 +30,9 @@
 
       <nav class="site-nav">
         <a href="#" class="nav-link active">Dashboard</a>
+        <a href="#" class="nav-link disabled">Map</a>
+        <a href="#" class="nav-link disabled">Education</a>
+        <a href="#" class="nav-link disabled">Historical</a>
       </nav>
 
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -61,16 +64,16 @@
 
   <main class="main-content">
 
-    <!-- Search -->
+    <!-- Search — NOW LIVE -->
     <section class="search-section">
-      <div class="search-bar">
+      <div class="search-bar" id="searchBar">
         <span class="search-icon">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
         </span>
-        <input type="text" class="search-input" placeholder="Search for a city or meteorological station..." disabled />
-        <button class="search-btn" disabled>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search for a city or meteorological station..." autocomplete="off" />
+        <button class="search-btn" id="searchBtn">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
@@ -79,187 +82,122 @@
       </div>
     </section>
 
-    <!-- Weather Card -->
-    <section class="weather-card-section">
-      <div class="weather-card">
-        <div class="weather-card-left">
-          <div class="city-row">
-            <h2 class="city-name">Copenhagen, Denmark</h2>
-            <button class="city-clear" title="Clear city">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    <!-- Error Banner (hidden by default) -->
+    <div class="error-banner" id="errorBanner" hidden>
+      <span class="error-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </span>
+      <span id="errorMsg">Something went wrong.</span>
+    </div>
+
+    <!-- Loading State (hidden by default) -->
+    <div class="loading-state" id="loadingState" hidden>
+      <div class="spinner"></div>
+      <span class="loading-text">Fetching weather data...</span>
+    </div>
+
+    <!-- Empty State (shown on first load with no saved city) -->
+    <div class="empty-state" id="emptyState" hidden>
+      <div class="empty-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+      <h3 class="empty-title">Search for a city</h3>
+      <p class="empty-desc">Enter any city name above to see real-time weather, a 5-day forecast, and hourly insights.</p>
+    </div>
+
+    <!-- Weather Content (hidden until data loads) -->
+    <div id="weatherContent" hidden>
+
+      <!-- Weather Card -->
+      <section class="weather-card-section">
+        <div class="weather-card">
+          <div class="weather-card-left">
+            <div class="city-row">
+              <h2 class="city-name" id="cityName">—</h2>
+              <button class="city-clear" id="clearCityBtn" title="Clear city">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <div class="weather-date">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
-            </button>
+              <span id="weatherDateText">—</span>
+            </div>
+            <div class="temp-row">
+              <span class="temp-val" id="tempVal">—</span>
+              <span class="temp-unit">C</span>
+            </div>
+            <div class="condition-row">
+              <span id="conditionIcon"></span>
+              <span id="conditionText">—</span>
+            </div>
           </div>
-          <div class="weather-date">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-            <span>Monday, Oct 24</span>
-          </div>
-          <div class="temp-row">
-            <span class="temp-val">12°</span>
-            <span class="temp-unit">C</span>
-          </div>
-          <div class="condition-row">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
-            </svg>
-            Partly Cloudy
+
+          <div class="weather-card-right">
+            <div class="metric-row">
+              <span class="metric-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/>
+                </svg>
+              </span>
+              <span class="metric-label">Humidity</span>
+              <span class="metric-val" id="humidityVal">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+                </svg>
+              </span>
+              <span class="metric-label">Wind Speed</span>
+              <span class="metric-val" id="windVal">—</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+              </span>
+              <span class="metric-label">Pressure</span>
+              <span class="metric-val" id="pressureVal">—</span>
+            </div>
           </div>
         </div>
+      </section>
 
-        <div class="weather-card-right">
-          <div class="metric-row">
-            <span class="metric-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/>
+      <!-- 5-Day Forecast -->
+      <section class="forecast-section">
+        <div class="forecast-strip" id="forecastStrip">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Hourly Insights -->
+      <section class="insights-section">
+        <div class="insights-card">
+          <div class="insights-hdr">
+            <h3 class="insights-ttl">Hourly Micro-Data Insights</h3>
+            <span class="insights-ico">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
               </svg>
             </span>
-            <span class="metric-label">Humidity</span>
-            <span class="metric-val">64%</span>
           </div>
-          <div class="metric-row">
-            <span class="metric-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
-              </svg>
-            </span>
-            <span class="metric-label">Wind Speed</span>
-            <span class="metric-val">18 km/h</span>
-          </div>
-          <div class="metric-row">
-            <span class="metric-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
-              </svg>
-            </span>
-            <span class="metric-label">Pressure</span>
-            <span class="metric-val">1012 hPa</span>
+          <div class="insights-list" id="insightsList">
+            <!-- Populated by JS -->
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 5-Day Forecast -->
-    <section class="forecast-section">
-      <div class="forecast-strip">
-        <div class="forecast-day active">
-          <span class="day-lbl">Today</span>
-          <span class="day-ico">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-          </span>
-          <span class="day-hi">12°</span>
-          <span class="day-lo">8°</span>
-        </div>
-        <div class="forecast-day">
-          <span class="day-lbl">Tue</span>
-          <span class="day-ico">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
-            </svg>
-          </span>
-          <span class="day-hi">10°</span>
-          <span class="day-lo">6°</span>
-        </div>
-        <div class="forecast-day">
-          <span class="day-lbl">Wed</span>
-          <span class="day-ico">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
-            </svg>
-          </span>
-          <span class="day-hi">11°</span>
-          <span class="day-lo">7°</span>
-        </div>
-        <div class="forecast-day">
-          <span class="day-lbl">Thu</span>
-          <span class="day-ico">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-          </span>
-          <span class="day-hi">14°</span>
-          <span class="day-lo">9°</span>
-        </div>
-        <div class="forecast-day">
-          <span class="day-lbl">Fri</span>
-          <span class="day-ico">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <line x1="8" y1="19" x2="8" y2="21"/><line x1="8" y1="13" x2="8" y2="15"/>
-              <line x1="16" y1="19" x2="16" y2="21"/><line x1="16" y1="13" x2="16" y2="15"/>
-              <line x1="12" y1="21" x2="12" y2="23"/><line x1="12" y1="15" x2="12" y2="17"/>
-              <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/>
-            </svg>
-          </span>
-          <span class="day-hi">9°</span>
-          <span class="day-lo">5°</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Hourly Insights -->
-    <section class="insights-section">
-      <div class="insights-card">
-        <div class="insights-hdr">
-          <h3 class="insights-ttl">Hourly Micro-Data Insights</h3>
-          <span class="insights-ico">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-          </span>
-        </div>
-        <div class="insights-list">
-          <div class="insight-row">
-            <span class="insight-time">14:00</span>
-            <span class="insight-ico-sm">☀️</span>
-            <span class="insight-lbl">High UV Index</span>
-            <span class="insight-temp">12.4°C</span>
-          </div>
-          <div class="insight-row">
-            <span class="insight-time">15:00</span>
-            <span class="insight-ico-sm">⛅</span>
-            <span class="insight-lbl">Developing Cumulus</span>
-            <span class="insight-temp">11.8°C</span>
-          </div>
-          <div class="insight-row">
-            <span class="insight-time">16:00</span>
-            <span class="insight-ico-sm">💨</span>
-            <span class="insight-lbl">Gust Peak Recorded</span>
-            <span class="insight-temp">11.2°C</span>
-          </div>
-          <div class="insight-row">
-            <span class="insight-time">17:00</span>
-            <span class="insight-ico-sm">🌥️</span>
-            <span class="insight-lbl">Stratus Coverage</span>
-            <span class="insight-temp">10.5°C</span>
-          </div>
-          <div class="insight-row">
-            <span class="insight-time">18:00</span>
-            <span class="insight-ico-sm">🌧️</span>
-            <span class="insight-lbl">Precipitation Expected</span>
-            <span class="insight-temp">9.8°C</span>
-          </div>
-          <div class="insight-row">
-            <span class="insight-time">19:00</span>
-            <span class="insight-ico-sm">🌅</span>
-            <span class="insight-lbl">Clear Dusk Horizon</span>
-            <span class="insight-temp">8.9°C</span>
-          </div>
-        </div>
-      </div>
-    </section>
+    </div><!-- /weatherContent -->
 
   </main>
 
@@ -280,5 +218,6 @@
   </footer>
 
   <script src="js/theme.js"></script>
+  <script src="js/weather.js"></script>
 </body>
 </html>
