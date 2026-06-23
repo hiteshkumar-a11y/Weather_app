@@ -48,6 +48,7 @@ const loadingState  = document.getElementById('loadingState');
 const emptyState    = document.getElementById('emptyState');
 const weatherContent = document.getElementById('weatherContent');
 const clearCityBtn  = document.getElementById('clearCityBtn');
+const clearSearchBtn = document.getElementById('clearSearchBtn');
 
 /* ---------- UI state helpers ---------- */
 function showLoading() {
@@ -253,8 +254,10 @@ async function handleSearch() {
     return;
   }
 
-  showLoading();
-  searchBtn.disabled = true;
+showLoading();
+
+searchBtn.disabled = true;
+searchInput.disabled = true;
 
   try {
     const location = await geocodeCity(query);
@@ -275,16 +278,23 @@ async function handleSearch() {
     showError(err.message);
     console.error('[WeatherApp] Error:', err);
   } finally {
-    searchBtn.disabled = false;
-  }
+  searchBtn.disabled = false;
+  searchInput.disabled = false;
+}
 }
 
 /* ---------- Clear city ---------- */
 function handleClear() {
   localStorage.removeItem(STORAGE_KEY);
+
   searchInput.value = '';
+  clearSearchBtn.hidden = true;
+
   weatherContent.dataset.loaded = '';
+
   showEmpty();
+
+  searchInput.focus();
 }
 
 /* ---------- Event listeners ---------- */
@@ -292,6 +302,16 @@ searchBtn.addEventListener('click', handleSearch);
 
 searchInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') handleSearch();
+});
+searchInput.addEventListener('input', () => {
+  clearSearchBtn.hidden =
+    searchInput.value.trim() === '';
+});
+
+clearSearchBtn.addEventListener('click', () => {
+  searchInput.value = '';
+  clearSearchBtn.hidden = true;
+  searchInput.focus();
 });
 
 clearCityBtn.addEventListener('click', handleClear);
@@ -303,7 +323,8 @@ clearCityBtn.addEventListener('click', handleClear);
     try {
       const { name, country, lat, lon } = JSON.parse(saved);
       showLoading();
-      searchInput.value = name;
+    //   searchInput.value = name;
+    searchInput.value = '';
       const forecast = await fetchForecast(lat, lon);
       renderWeather(name, country, forecast);
     } catch (err) {
